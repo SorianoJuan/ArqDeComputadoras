@@ -1,20 +1,20 @@
 /*
 OPERATIONS
-ADD         100000
-SUB         100010
-AND         100100
-OR          100101
-XOR         100110
-SRA         000011
-SRL         000010
-NOR         100111
 */
 
 module alu
   #(
     // Parameters.
     parameter                                       NB_DATA                     = 8 ,   // Nr of bits in the registers
-    parameter                                       NB_OPERATION                = 6     // Nr of bits in the operation input
+    parameter                                       NB_OPERATION                = 6 ,    // Nr of bits in the operation input
+    localparam ADD =        4'b1000,
+    localparam SUB =        4'b1010,
+    localparam AND =        4'b1100,
+    localparam OR  =        4'b1101,
+    localparam XOR =        4'b1110,
+    localparam SRA =        4'b0011,
+    localparam SRL =        4'b0010,
+    localparam NOR =        4'b1111
     )
    (
     // Outputs.
@@ -62,21 +62,21 @@ module alu
    always @(*)
      begin
         case(op)
-          6'b100000: // ADD
+          ADD: // ADD
             o_result = data_a + data_b ; 
-          6'b100010: // SUB
+          SUB: // SUB
             o_result = data_a - data_b ;
-          6'b100100: // AND
+          AND: // AND
             o_result = data_a & data_b ;
-          6'b100101: // OR
+          OR: // OR
             o_result = data_a | data_b ;
-          6'b100110: // XOR
+          XOR: // XOR
             o_result = data_a ^ data_b ;
-          6'b000011: // SRA (Arithmetic: keep sign)
+          SRA: // SRA (Arithmetic: keep sign)
             o_result = data_a >>> data_b ;
-          6'b000010: // SRL (Logical: fills with zero)
+          SRL: // SRL (Logical: fills with zero)
             o_result = data_a >> data_b ;
-          6'b100111: // NOR
+          NOR: // NOR
             o_result = ~ (data_a & data_b);
           default: o_result = {NB_DATA{1'b1}};
         endcase
