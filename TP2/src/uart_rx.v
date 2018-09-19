@@ -1,6 +1,6 @@
 
 
-module preamble_finder
+module uart_rx 
 #(
     // Parameters.
     parameter                                   NB_DATA        = 1 , // Parallelism = 1
@@ -46,12 +46,13 @@ module preamble_finder
     reg                                             data_d ;
     wire                                            data_negedge ;
 
-    reg             [LOG2_MAX_TIMER-1:0]            timer ;
+    reg             [NB_TIMER-1:0]                  timer ;
     wire                                            time_out ;
 
     wire                                            sof ;
     wire                                            max_n_data_counter ;
     wire                                            max_m_stop_counter ;
+    wire                                            sampling_timeout ;
 
     reg             [LOG2_N_DATA-1:0]               n_data_counter ;
     reg             [LOG2_M_STOP-1:0]               m_stop_counter ;
@@ -60,6 +61,7 @@ module preamble_finder
     reg             [NB_STATE-1:0]                  state ;
     reg             [NB_STATE-1:0]                  next_state ;
 
+    reg                                             fsmo_idle ;
     reg                                             fsmo_reset_timer ;
     //reg                                             fsmo_start_timer ;
     reg                                             fsmo_middle_sampling ; //Control signal for sampling at 7 clocks
@@ -181,7 +183,7 @@ module preamble_finder
             data_d <= i_data ;
     end
 
-    assign data_negedge = ~i_data & rdv_i_d ;
+    assign data_negedge = ~i_data & data_d ;
 
     assign sof = (data_negedge && fsmo_idle);
 
