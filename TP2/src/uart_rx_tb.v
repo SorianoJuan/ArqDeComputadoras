@@ -10,17 +10,17 @@ module tb_uart_rx();
 
 
    // Outputs.
-   wire    [N_DATA+PARITY_CHECK-1:0]            data_tb_o ;
-   wire                                         rx_done_tb ;   // Data is ready
+   wire    [N_DATA+PARITY_CHECK-1:0]           		  data_tb_o ;
+   wire                                        		  rx_done_tb ;   // Data is ready
    // Inputs.
-   reg    [NB_DATA-1:0]                         data_tb_i ;
-   reg                                          valid_tb_i ;   // Throughput control.
-   reg                                          reset_tb_i ;
-   reg                                          clock_tb_i ;
+   reg    [NB_DATA-1:0]                         	  data_tb_i ;
+   reg                                          	  valid_tb_i ;   // Throughput control.
+   reg                                          	  reset_tb_i ;
+   reg                                          	  clock_tb_i ;
    
-   reg     [4-1:0]                              timer ;
-   wire                                         timeout ;
-   reg     [N_DATA+PARITY_CHECK+M_STOP+1-1:0]   data ;  
+   reg     [4-1:0]                                    timer ;
+   wire                                               timeout ;
+   reg     [((N_DATA+PARITY_CHECK+M_STOP+1)*2)-1:0]   data ;  
 
    initial begin
       clock_tb_i = 1'b0;
@@ -28,8 +28,9 @@ module tb_uart_rx();
       valid_tb_i = 1'b0;
       data_tb_i = 'b0 ;
       timer = 1'b0 ;
-      data = 'b110111011101 ;
-      //frame recibido 111011101
+      data = 'b01100100000100111011101 ;
+      //frame recibido 1) 11101110 0
+      //frame recibido 2) 00001001 1 Con error de paridad
       
       #2 reset_tb_i = 1'b1;
       #4 reset_tb_i = 1'b0;
@@ -37,7 +38,7 @@ module tb_uart_rx();
       #5 valid_tb_i = 1'b1 ;
 
 
-      #1500 $finish;
+      #5000 $finish;
 
    end
 
