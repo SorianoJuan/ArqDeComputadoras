@@ -3,17 +3,19 @@
 module uart_rx 
 #(
     // Parameters.
-    parameter                                   NB_DATA        = 1 , // Parallelism = 1
-    parameter                                   N_DATA         = 8 , // Nr of bits from frame
-    parameter                                   LOG2_N_DATA    = 4 , // LOG2 (N_DATA+PARITY)
-    parameter                                   PARITY_CHECK   = 1 , // 1 If parity check is enabled, otherwise 0
-    parameter                                   M_STOP         = 1 , // Nr of bits from stop 
-    parameter                                   LOG2_M_STOP    = 1                            
+    parameter                                   NB_DATA         = 1 , // Parallelism = 1
+    parameter                                   N_DATA          = 8 , // Nr of bits from frame
+    parameter                                   LOG2_N_DATA     = 4 , // LOG2 (N_DATA+PARITY)
+    parameter                                   PARITY_CHECK    = 1 , // 1 If parity check is enabled, otherwise 0
+    parameter                                   EVEN_ODD_PARITY = 1 , // 1 If parity is even, 0 if it's odd 
+    parameter                                   M_STOP          = 1 , // Nr of bits from stop 
+    parameter                                   LOG2_M_STOP     = 1                            
 )
 (
     // Outputs.
     output  reg     [N_DATA+PARITY_CHECK-1:0]   o_data ,
     output  reg                                 rx_done ,   // Data is ready
+    output  reg                                 o_frame_valid , // Parity check
     // Inputs.
     input   wire    [NB_DATA-1:0]               i_data ,
     input   wire                                i_valid ,   // Throughput control.
@@ -203,6 +205,15 @@ module uart_rx
             rx_done <= 1'b0 ;
         else if ( i_valid )
             rx_done <= fsmo_data_ready ;
+    end
+
+    // Parity check
+    always @ ( posedge i_clock)
+    begin
+        if ( i_reset )
+            o_frame_valid <= 1'b0 ;
+        else if ( i_valid && PARITY_CHECK && fsmo_data_ready )
+            o_frame_valid <= (EVEN_ODD_PARITY == 1'b1) ? (^o_data[N_DATA+PARITY_CHECK-1:1]==o_data[0]) : (~^o_data[N_DATA+PARITY_CHECK-1:1]==o_data[0]);
     end
 
 

@@ -1,11 +1,12 @@
 module tb_uart_rx();
    
-   parameter NB_DATA        = 1 ;
-   parameter N_DATA         = 8 ;
-   parameter LOG2_N_DATA    = 4 ;
-   parameter PARITY_CHECK   = 1 ;
-   parameter M_STOP         = 1 ;
-   parameter LOG2_M_STOP    = 1 ;
+   localparam NB_DATA        = 1 ;
+   localparam N_DATA         = 8 ;
+   localparam LOG2_N_DATA    = 4 ;
+   localparam PARITY_CHECK   = 1 ;
+   localparam EVEN_ODD_PARITY = 1 ;
+   localparam M_STOP         = 1 ;
+   localparam LOG2_M_STOP    = 1 ;
 
 
    // Outputs.
@@ -63,12 +64,13 @@ module tb_uart_rx();
 
    uart_rx
    #(
-      .NB_DATA        (NB_DATA    ),  
-      .N_DATA         (N_DATA     ),
-      .LOG2_N_DATA    (LOG2_N_DATA),
-      .PARITY_CHECK   (PARITY_CHECK),
-      .M_STOP         (M_STOP     ),
-      .LOG2_M_STOP    (LOG2_M_STOP)
+      .NB_DATA        	(NB_DATA    ),  
+      .N_DATA         	(N_DATA     ),
+      .LOG2_N_DATA    	(LOG2_N_DATA),
+      .PARITY_CHECK   	(PARITY_CHECK),
+      .EVEN_ODD_PARITY	(EVEN_ODD_PARITY),
+      .M_STOP         	(M_STOP     ),
+      .LOG2_M_STOP    	(LOG2_M_STOP)
    )
    u_uart_rx
    (
