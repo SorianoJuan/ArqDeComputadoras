@@ -5,14 +5,14 @@ module uart_rx
     // Parameters.
     parameter                                   NB_DATA        = 1 , // Parallelism = 1
     parameter                                   N_DATA         = 8 , // Nr of bits from frame
-    parameter                                   LOG2_N_DATA    = 3 ,
+    parameter                                   LOG2_N_DATA    = 4 , // LOG2 (N_DATA+PARITY)
     parameter                                   PARITY_CHECK   = 1 , // 1 If parity check is enabled, otherwise 0
     parameter                                   M_STOP         = 1 , // Nr of bits from stop 
     parameter                                   LOG2_M_STOP    = 1                            
 )
 (
     // Outputs.
-    output  reg     [N_DATA-1:0]                o_data ,
+    output  reg     [N_DATA+PARITY_CHECK-1:0]   o_data ,
     output  reg                                 rx_done ,   // Data is ready
     // Inputs.
     input   wire    [NB_DATA-1:0]               i_data ,
@@ -192,7 +192,7 @@ module uart_rx
     begin
         if ( i_reset )
             o_data <= 1'b0 ;
-        else if ( i_valid && fsmo_capture_data )
+        else if ( i_valid && fsmo_capture_data && time_out)
             o_data <= {o_data, i_data} ;
     end
 
@@ -236,7 +236,7 @@ module uart_rx
             n_data_counter <= n_data_counter + 1'b1 ;
     end
 
-    assign max_n_data_counter = ( n_data_counter >= N_DATA) + PARITY_CHECK ;
+    assign max_n_data_counter = ( n_data_counter >= (N_DATA + PARITY_CHECK) ) ;
 
     // M_STOP Counter
     /*

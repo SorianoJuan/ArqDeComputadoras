@@ -2,14 +2,14 @@ module tb_uart_rx();
    
    parameter NB_DATA        = 1 ;
    parameter N_DATA         = 8 ;
-   parameter LOG2_N_DATA    = 3 ;
+   parameter LOG2_N_DATA    = 4 ;
    parameter PARITY_CHECK   = 1 ;
    parameter M_STOP         = 1 ;
    parameter LOG2_M_STOP    = 1 ;
 
 
    // Outputs.
-   wire    [N_DATA-1:0]                         data_tb_o ;
+   wire    [N_DATA+PARITY_CHECK-1:0]            data_tb_o ;
    wire                                         rx_done_tb ;   // Data is ready
    // Inputs.
    reg    [NB_DATA-1:0]                         data_tb_i ;
@@ -27,7 +27,8 @@ module tb_uart_rx();
       valid_tb_i = 1'b0;
       data_tb_i = 'b0 ;
       timer = 1'b0 ;
-      data = 'b11010101010 ;
+      data = 'b110111011101 ;
+      //frame recibido 111011101
       
       #2 reset_tb_i = 1'b1;
       #4 reset_tb_i = 1'b0;
@@ -35,7 +36,7 @@ module tb_uart_rx();
       #5 valid_tb_i = 1'b1 ;
 
 
-      #500 $finish;
+      #1500 $finish;
 
    end
 
@@ -54,7 +55,8 @@ module tb_uart_rx();
    always @ (posedge clock_tb_i)
    begin
       if (timeout)
-         data_tb_i <= data>>1'b1 ;
+      	 data <= data>>1'b1 ;
+      	 data_tb_i <= data ;
    end
 
 
