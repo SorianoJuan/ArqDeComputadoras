@@ -1,6 +1,4 @@
-
-
-module uart_rx 
+module uart_tx 
 #(
     // Parameters.
     parameter                                   NB_DATA         = 8 , // Parallelism meaning how many bits of information are ready to be sent
