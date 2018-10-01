@@ -14,10 +14,10 @@ module uart_rx
 (
     // Outputs.
     output  reg                                 o_data ,
-    output  reg                                 tx_done ,   // Data is sent
+    output  reg                                 o_tx_done ,   // Data is sent
     // Inputs.
     input   wire    [NB_DATA-1:0]               i_data ,
-    input   wire                                tx_start ,
+    input   wire                                i_tx_start ,
     input   wire                                i_valid ,   // Throughput control.
 
     input   wire                                i_reset ,
@@ -36,8 +36,8 @@ module uart_rx
     localparam      [NB_STATE-1:0]              ST_3_STOP       = 3 ;
 
     // Other
-    localparam                                  MAX_TIMER       = 15 ;
-    localparam                                  NB_TIMER        = 4 ;
+    localparam                                  MAX_TIMER       = 16 ;
+    localparam                                  NB_TIMER        = 5 ;
 
     localparam                                  NB_N_DATA_COUNTER = LOG2_N_DATA ;
     localparam                                  NB_M_STOP_COUNTER = LOG2_M_STOP ;                            
@@ -45,6 +45,9 @@ module uart_rx
     //==========================================================================
     // INTERNAL SIGNALS.
     //==========================================================================
+    reg             [NB_DATA-1:0]                   data ;
+    wire                                            parity_bit ; //Signal if the bit to be transmitted is the parity bit
+
     reg             [NB_TIMER-1:0]                  timer ;
     wire                                            time_out ;
 
@@ -57,6 +60,14 @@ module uart_rx
     // FSM
     reg             [NB_STATE-1:0]                  state ;
     reg             [NB_STATE-1:0]                  next_state ;
+
+    reg                                             fsmo_start_bit ;
+    reg                                             fsmo_reset_n_data_counter ; //Control signal to reset data counter
+    reg                                             fsmo_reset_m_stop_counter ; //Control signal to reset stop counter
+    reg                                             fsmo_reset_timer ;
+    reg                                             fsmo_transmit_data ;
+    reg                                             fsmo_tx_done ;
+    reg                                             fsmo_stop_bit ;
 
     //==========================================================================
     // ALGORITHM.
@@ -80,38 +91,73 @@ module uart_rx
     begin
 
         next_state                  = ST_0_IDLE ;
+        fsmo_start_bit              = 1'b0 ;
+        fsmo_reset_timer            = 1'b0 ;
+        fsmo_reset_n_data_counter   = 1'b0 ;
+        fsmo_reset_m_stop_counter   = 1'b0 ;
+        fsmo_transmit_data          = 1'b0 ;
+        fsmo_tx_done                = 1'b0 ;
+        fsmo_stop_bit               = 1'b0 ;
 
         case ( state )
             ST_0_IDLE :
             begin
-                casez ( {} )
-
+                casez ( {time_out, i_tx_start, max_n_data_counter, max_m_stop_counter} )
+                    4'b?1??: next_state = ST_1_START ;
+                    default: next_state = ST_0_IDLE ;
                 endcase
-
+            fsmo_start_bit              = 1'b0 ;
+            fsmo_reset_timer            = i_tx_start ;
+            fsmo_reset_n_data_counter   = 1'b0 ;
+            fsmo_reset_m_stop_counter   = 1'b0 ;
+            fsmo_transmit_data          = 1'b0 ;
+            fsmo_tx_done                = 1'b0 ;
+            fsmo_stop_bit               = 1'b0 ;
             end
 
             ST_1_START :
             begin
-                casez ( {} )
-
+                casez ( {time_out, i_tx_start, max_n_data_counter, max_m_stop_counter} )
+                    4'b1???: next_state = ST_2_DATA ;
+                    default: next_state = ST_1_START ;
                 endcase
-
+            fsmo_start_bit              = 1'b1 ;
+            fsmo_reset_timer            = 1'b0 ;
+            fsmo_reset_n_data_counter   = time_out ;
+            fsmo_reset_m_stop_counter   = 1'b0 ;
+            fsmo_transmit_data          = 1'b0 ;
+            fsmo_tx_done                = 1'b0 ; 
+            fsmo_stop_bit               = 1'b0 ;
             end
 
             ST_2_DATA :
             begin
-                casez ( {} )
-
+                casez ( {time_out, i_tx_start, max_n_data_counter, max_m_stop_counter} )
+                    4'b??1?: next_state = ST_3_STOP ;
+                    default: next_state = ST_2_DATA ;
                 endcase
-
+            fsmo_start_bit              = 1'b0 ;
+            fsmo_reset_timer            = 1'b0 ;
+            fsmo_reset_n_data_counter   = 1'b0 ;
+            fsmo_reset_m_stop_counter   = max_n_data_counter ;
+            fsmo_transmit_data          = 1'b1 ;
+            fsmo_tx_done                = max_n_data_counter ;
+            fsmo_stop_bit               = max_n_data_counter ;
             end
 
             ST_3_STOP :
             begin
-                casez ( {} )
-
+                casez ( {time_out, i_tx_start, max_n_data_counter, max_m_stop_counter} )
+                    4'b???1: next_state = ST_0_IDLE ;
+                    default: next_state = ST_3_STOP ;
                 endcase
-
+            fsmo_start_bit              = 1'b0 ;
+            fsmo_reset_timer            = 1'b0 ;
+            fsmo_reset_n_data_counter   = 1'b0 ;
+            fsmo_reset_m_stop_counter   = 1'b0 ;
+            fsmo_transmit_data          = 1'b0 ;
+            fsmo_tx_done                = 1'b0 ;
+            fsmo_stop_bit               = 1'b1 ;
             end
 
         endcase
@@ -126,7 +172,6 @@ module uart_rx
     /*
     Timer que cuenta ticks para sincronizar los datos.
     */
-    //TODO: Ver tema de racing condition entre timeout para el contador de n y m
     always @( posedge i_clock )
     begin
         if ( i_reset || i_valid && fsmo_reset_timer || time_out )
@@ -136,8 +181,6 @@ module uart_rx
     end
 
     assign time_out = ( timer >= MAX_TIMER ) ;
-
-    assign sampling_timeout = (( timer >= 7 ) && fsmo_middle_sampling ) ;
 
     // N_DATA Counter
     /*
@@ -153,6 +196,7 @@ module uart_rx
     end
 
     assign max_n_data_counter = ( n_data_counter >= (N_DATA + PARITY_CHECK) ) ;
+    assign parity_bit = (n_data_counter >= N_DATA) && PARITY_CHECK ;
 
     // M_STOP Counter
     /*
@@ -168,5 +212,40 @@ module uart_rx
     end
 
     assign max_m_stop_counter = ( m_stop_counter >= M_STOP) ;    
+
+    // Data copy into internal register
+    always @( posedge i_clock )
+    begin
+        if ( i_reset )
+            data <= {NB_DATA{1'b0}} ;
+        else if ( i_valid && i_tx_start )
+            data <= i_data ;
+    end
+
+    // Frame composition + TX
+    always @( posedge i_clock )
+    begin
+        if ( i_reset )
+            o_data <= 1'b0 ;
+        else if ( i_valid && fsmo_start_bit && time_out )
+            o_data <= 1'b0 ;
+        else if ( i_valid && fsmo_transmit_data && time_out && !parity_bit) begin
+            o_data <= data ;
+            data <= data>>1'b1 ;
+            end
+        else if ( i_valid && fsmo_transmit_data && time_out && parity_bit )
+            o_data <= (EVEN_ODD_PARITY == 1'b1) ? ^i_data : ~^i_data ;
+        else if ( i_valid && fsmo_stop_bit && time_out )
+            o_data <= 1'b1 ;      
+    end
+
+    // tx_done
+    always @ ( posedge i_clock )
+    begin
+        if ( i_reset )
+            o_tx_done <= 1'b0 ;
+        else if ( i_valid && fsmo_tx_done )
+            o_tx_done <= 1'b0 ;
+    end
 
 endmodule
