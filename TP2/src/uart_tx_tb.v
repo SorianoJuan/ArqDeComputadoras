@@ -73,6 +73,9 @@ module tb_uart_tx();
          data_tb_i <= data[0] ;
          timeout_counter <= 1'b0 ;
       end
+      else begin
+         tx_start_tb_i <= 1'b0 ;
+      end
    end
 
 
