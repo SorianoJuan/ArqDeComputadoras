@@ -216,7 +216,7 @@ module uart_tx
     begin
         if ( i_reset )
             data <= {NB_DATA{1'b0}} ;
-        else if ( i_valid && i_tx_start )
+        else if ( i_valid && i_tx_start && (state==ST_0_IDLE))
             data <= i_data ;
     end
 
@@ -228,8 +228,9 @@ module uart_tx
         else if ( i_valid && fsmo_start_bit && time_out )
             o_data <= 1'b0 ;
         else if ( i_valid && fsmo_transmit_data && time_out && !parity_bit) begin
-            o_data <= data ;
-            data <= data>>1'b1 ;
+            //o_data <= data ;
+            //data <= data>>1'b1 ;
+            {data, o_data} <= {1'b0, data} ;
             end
         else if ( i_valid && fsmo_transmit_data && time_out && parity_bit )
             o_data <= (EVEN_ODD_PARITY == 1'b1) ? ^i_data : ~^i_data ;
@@ -243,7 +244,7 @@ module uart_tx
         if ( i_reset )
             o_tx_done <= 1'b0 ;
         else if ( i_valid && fsmo_tx_done )
-            o_tx_done <= 1'b0 ;
+            o_tx_done <= 1'b1 ;
     end
 
 endmodule
