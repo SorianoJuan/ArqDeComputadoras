@@ -21,65 +21,45 @@ module alu
     output reg [NB_DATA-1:0] o_result , // Result of the operation
     
     // Inputs.
-    input wire [NB_DATA-1:0] i_data , 
-    
-    input wire [2:0]         i_valid , // Throughput control.
-    input wire               i_reset ,
-    input wire               i_clock
-    
+    input wire [NB_DATA-1:0] i_data_a,
+    input wire [NB_DATA-1:0] i_data_b,
+    input wire [NB_DATA-1:0] i_op
     ) ;
-   //==========================================================================
-   // LOCAL PARAMETERS.
-   //==========================================================================
    
-   //==========================================================================
-   // INTERNAL SIGNALS.
-   //==========================================================================
-   reg [NB_DATA-1:0]         data_a ;
-   reg [NB_DATA-1:0]         data_b ;
-   reg [NB_OPERATION-1:0]    op ;
-   
-   //==========================================================================
-   // ALGORITHM.
-   //==========================================================================
-   
-   always @(posedge i_clock) begin
-      if (i_reset) begin
-         //o_result <= 'b0 ;
-         data_a <= 'b0 ;
-         data_b <= 'b0 ;
-         op <= 'b0 ;
-      end
-      else begin
-         case(1'b1)
-           i_valid[0]: data_a <= i_data;
-           i_valid[1]: data_b <= i_data;
-           i_valid[2]: op <= i_data[NB_OPERATION-1:0];
-         endcase
-      end
-   end
-   
+   wire [NB_DATA-1:0]        shifted;
+   wire [NB_DATA-1:0]        ashifted;
+   integer                   i;
+
    always @(*)
      begin
-        case(op)
+        case(i_op)
           ADD: // ADD
-            o_result = data_a + data_b ; 
+            o_result = i_data_a + i_data_b ;
           SUB: // SUB
-            o_result = data_a - data_b ;
+            o_result = i_data_a - i_data_b ;
           AND: // AND
-            o_result = data_a & data_b ;
+            o_result = i_data_a & i_data_b ;
           OR: // OR
-            o_result = data_a | data_b ;
+            o_result = i_data_a | i_data_b ;
           XOR: // XOR
-            o_result = data_a ^ data_b ;
-          SRA: // SRA (Arithmetic: keep sign)
-            o_result = data_a >>> data_b ;
-          SRL: // SRL (Logical: fills with zero)
-            o_result = data_a >> data_b ;
+            o_result = i_data_a ^ i_data_b ;
+          SRA: begin// SRA (Arithmetic: keep sign)
+             o_result = 'b0;
+             for(i = 0; i<2**NB_DATA; i=i+1) begin
+                if(i_data_b == i)
+                  o_result = $signed(i_data_a) >>> i;
+             end
+          end
+          SRL: begin// SRL (Logical: fills with zero)
+             o_result = 'b0;
+             for(i = 0; i<2**NB_DATA; i=i+1) begin
+                if(i_data_b == i)
+                  o_result = i_data_a >> i;
+             end
+          end
           NOR: // NOR
-            o_result = ~ (data_a & data_b);
+            o_result = ~ (i_data_a & i_data_b);
           default: o_result = {NB_DATA{1'b1}};
         endcase
      end
-   
 endmodule
