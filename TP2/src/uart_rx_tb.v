@@ -12,9 +12,10 @@ module tb_uart_rx();
    // Outputs.
    wire    [N_DATA+PARITY_CHECK-1:0]           		  data_tb_o ;
    wire                                        		  rx_done_tb ;   // Data is ready
+   wire                                        		  o_frame_valid;   // Data is ready
    // Inputs.
+
    reg    [NB_DATA-1:0]                         	  data_tb_i ;
-   reg                                          	  valid_tb_i ;   // Throughput control.
    reg                                          	  reset_tb_i ;
    reg                                          	  clock_tb_i ;
    
@@ -22,10 +23,13 @@ module tb_uart_rx();
    wire                                               timeout ;
    reg     [((N_DATA+PARITY_CHECK+M_STOP+1)*2)-1:0]   data ;  
 
+   // Wires.
+
+   wire                                               brgen_valid_urx;
+
    initial begin
       clock_tb_i = 1'b0;
       reset_tb_i = 1'b0;
-      valid_tb_i = 1'b0;
       data_tb_i = 'b0 ;
       timer = 1'b0 ;
       data = 'b01100100000100111011101 ;
@@ -34,9 +38,6 @@ module tb_uart_rx();
       
       #2 reset_tb_i = 1'b1;
       #4 reset_tb_i = 1'b0;
-
-      #5 valid_tb_i = 1'b1 ;
-
 
       #5000 $finish;
 
@@ -48,7 +49,7 @@ module tb_uart_rx();
    begin
       if (reset_tb_i || timeout)
          timer <= 1'b0 ;
-      else if ( valid_tb_i )
+      else if (brgen_valid_urx)
          timer <= timer + 1'b1 ;
    end
 
@@ -78,9 +79,17 @@ module tb_uart_rx();
       .o_data           (data_tb_o),
       .rx_done          (rx_done_tb),   
       .i_data           (data_tb_i),
-      .i_valid          (valid_tb_i),   
+      .i_valid          (brgen_valid_urx),   
       .i_reset          (reset_tb_i),   
       .i_clock          (clock_tb_i)
    );
 
+   br_generator#(
+                 .CLK_FREQ(614400 )// 4 ciclos por tick
+                 )
+   u_gr_generator(
+                  .o_tick(brgen_valid_urx),
+                  .i_clk(clock_tb_i),
+                  .i_rst(reset_tb_i)
+                  );
 endmodule
