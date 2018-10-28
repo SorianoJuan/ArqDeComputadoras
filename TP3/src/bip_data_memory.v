@@ -41,7 +41,6 @@ module bip_data_memory
             mem_bank[i_addr] <= i_data ; //Write
         else if (i_rd)
             data <= mem_bank[i_addr]; //Read
-        end
     end
 
 endmodule

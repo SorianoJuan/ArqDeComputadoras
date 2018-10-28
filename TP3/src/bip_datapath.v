@@ -7,7 +7,10 @@ module bip_datapath
     parameter 									N_INSMEM_ADDR = 2048,
     parameter 									LOG2_N_INSMEM_ADDR = 11,
     parameter 									N_DATA_ADDR = 1024, 
-    parameter 									LOG2_N_DATA_ADDR = 10
+    parameter 									LOG2_N_DATA_ADDR = 10,
+    parameter                                   NB_SEL_A = 2, 
+    parameter                                   NB_DATA_S_EXT = 11,
+    parameter                                   NB_EXTENSION_SIZE = 5
 )
 (
     // Outputs.
@@ -27,9 +30,7 @@ module bip_datapath
     //==========================================================================
     // LOCAL PARAMETERS.
     //==========================================================================
-    localparam 									NB_SEL_A = 2 ;
-    localparam                                  NB_DATA_S_EXT = 11 ;
-    localparam                                  NB_EXTENSION_SIZE = 5 ;
+
 
     //==========================================================================
     // INTERNAL SIGNALS.
@@ -47,20 +48,21 @@ module bip_datapath
 
     assign mux_selb = (i_sel_b)? extended_signal : i_data_mem ; // Mux that selects either extended signal or input from data bank
 
-    assign extended_signal = NB_EXTENSION_SIZE{i_data_instruction[] //Ver esto
+    assign extended_signal = i_data_instruction ; //Ver esto
 
     assign alu_out = (i_op_code)? acc + mux_selb : acc - mux_selb ;
 
     //Accumulator mux
-    always @ (posedgle i_clk) 
+    always @ (posedge i_clock) 
     begin
         if (i_reset)
             acc <= {NB_DATA{1'b0}};
-        else if (i_wr_acc) begin
+        else if (i_wr_acc == 1'b1) begin
             case (i_sel_a)
             2'b00: acc <= i_data_mem;
             2'b01: acc <= extended_signal;
             2'b10: acc <= alu_out;
+            default: acc <= acc;
             endcase
         end
     end

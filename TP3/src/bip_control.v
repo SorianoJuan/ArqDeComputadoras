@@ -8,17 +8,18 @@ module bip_control
     parameter 									LOG2_N_INSMEM_ADDR = 11,
     parameter 									N_DATA_ADDR = 1024, 
     parameter 									LOG2_N_DATA_ADDR = 10,
+    parameter 									NB_SEL_A = 2
 )
 (
     // Outputs.
     output reg 		[NB_SEL_A-1:0]				o_sel_a,
     output reg 									o_sel_b,
     output reg 									o_wr_acc,
-    output reg 									o_op,
+    output reg 									o_op_code,
     output reg 									o_wr_ram,
     output reg 									o_rd_ram,
-    output reg 		[LOG2_N_DATA_ADDR-1:0]		o_addr_instr,
-    output reg 		[LOG2_N_INSMEM_ADDR-1:0]	o_data_instr,
+    output wire 	[LOG2_N_DATA_ADDR-1:0]		o_addr_instr,
+    output wire 	[LOG2_N_INSMEM_ADDR-1:0]	o_data_instr,
     // Inputs.
     input  wire 	[NB_DATA-1:0]				i_instruction,
     input  wire 								i_clock,
@@ -29,7 +30,6 @@ module bip_control
     //==========================================================================
     // LOCAL PARAMETERS.
     //==========================================================================
-    localparam 									NB_SEL_A = 2 ;
 
     //Operations
     localparam 		[NB_OPERAND-1:0]			HALT = 0;
@@ -58,9 +58,11 @@ module bip_control
     // PC refresh
     always @ (posedge i_clock)
     begin
-    	if (i_reset)
+    	if (i_reset) 
+    	begin
     		pc <= {N_INSMEM_ADDR{1'b0}};
     		wr_pc <= 1'b0 ;
+    	end
     	else if (i_valid && wr_pc)
     		pc <= pc + 1'b1 ;
     end
