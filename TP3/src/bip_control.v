@@ -72,38 +72,92 @@ module bip_control
     		HALT :
     		begin
     			wr_pc = 1'b0 ;
+                o_sel_a = 2'b0 ;
+                o_sel_b = 1'b0 ;
+                o_wr_acc = 1'b0 ;
+                o_op_code = 1'b0 ;
+                o_wr_ram = 1'b0 ;
+                o_rd_ram = 1'b0 ;
     		end
     		STORE_VARIABLE :
     		begin
     			wr_pc = 1'b1 ;
+                o_sel_a = 2'b00 ; //Ver
+                o_sel_b = 1'b0 ;
+                o_wr_acc = 1'b0 ;
+                o_op_code = 1'b0 ;
+                o_wr_ram = 1'b1 ;
+                o_rd_ram = 1'b0 ;
     		end
     		LOAD_VARIABLE :
     		begin
     			wr_pc = 1'b1 ;
+                o_sel_a = 2'b00 ;
+                o_sel_b = 1'b0 ;
+                o_wr_acc = 1'b1 ;
+                o_op_code = 1'b0 ;
+                o_wr_ram = 1'b0 ;
+                o_rd_ram = 1'b1 ;
     		end
     		LOAD_IMMEDIATE : 
     		begin
     			wr_pc = 1'b1 ;
+                o_sel_a = 2'b01 ;
+                o_sel_b = 1'b0 ;
+                o_wr_acc = 1'b1 ;
+                o_op_code = 1'b0 ;
+                o_wr_ram = 1'b0 ;
+                o_rd_ram = 1'b0 ;
     		end
     		ADD_VARIABLE : 
     		begin
     			wr_pc = 1'b1 ;
+                o_sel_a = 2'b10 ;
+                o_sel_b = 1'b0 ;
+                o_wr_acc = 1'b1 ;
+                o_op_code = 1'b1 ;
+                o_wr_ram = 1'b0 ;
+                o_rd_ram = 1'b1 ;
     		end
     		ADD_IMMEDIATE :
     		begin
     			wr_pc = 1'b1 ;
+                o_sel_a = 2'b10 ;
+                o_sel_b = 1'b1 ;
+                o_wr_acc = 1'b1 ;
+                o_op_code = 1'b1 ;
+                o_wr_ram = 1'b0 ;
+                o_rd_ram = 1'b0 ;
     		end
     		SUBSTRACT_VARIABLE :
     		begin
     			wr_pc = 1'b1 ;
+                o_sel_a = 2'b10 ;
+                o_sel_b = 1'b0 ;
+                o_wr_acc = 1'b1 ;
+                o_op_code = 1'b0 ;
+                o_wr_ram = 1'b0 ;
+                o_rd_ram = 1'b1 ;
     		end
     		SUBSTRACT_IMMEDIATE :
     		begin
     			wr_pc = 1'b1 ;
+                o_sel_a = 2'b10 ;
+                o_sel_b = 1'b1 ;
+                o_wr_acc = 1'b1 ;
+                o_op_code = 1'b0 ;
+                o_wr_ram = 1'b0 ;
+                o_rd_ram = 1'b0 ;
     		end
     		default :
     		begin
     			wr_pc = 1'b0 ;
+                o_sel_a = 2'b0 ;
+                o_sel_b = 1'b0 ;
+                o_wr_acc = 1'b0 ;
+                o_op_code = 1'b0 ;
+                o_wr_ram = 1'b0 ;
+                o_rd_ram = 1'b0 ;
     		end
     	endcase // i_instruction[NB_DATA-1-:NB_OPERAND]
     end

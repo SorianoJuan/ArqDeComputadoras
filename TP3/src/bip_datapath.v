@@ -48,7 +48,7 @@ module bip_datapath
 
     assign mux_selb = (i_sel_b)? extended_signal : i_data_mem ; // Mux that selects either extended signal or input from data bank
 
-    assign extended_signal = i_data_instruction ; //Ver esto
+    assign extended_signal = {{NB_EXTENSION_SIZE{i_data_instruction[NB_OPERAND-1]}}, i_data_instruction} ; // Replicate sign to get to NB_DATA bits
 
     assign alu_out = (i_op_code)? acc + mux_selb : acc - mux_selb ;
 
