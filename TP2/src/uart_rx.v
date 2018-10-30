@@ -224,13 +224,13 @@ module uart_rx
     //TODO: Ver tema de racing condition entre timeout para el contador de n y m
     always @( posedge i_clock )
     begin
-        if ( i_reset || i_valid && fsmo_reset_timer || time_out )
+        if ( i_reset || i_valid && fsmo_reset_timer || i_valid && time_out )
             timer <= {NB_TIMER{1'b0}} ;
         else if ( i_valid && !time_out )
             timer <= timer + 1'b1 ;
     end
 
-    assign time_out = ( timer >= MAX_TIMER ) ;
+    assign time_out = &timer;
 
     assign sampling_timeout = (( timer >= 7 ) && fsmo_middle_sampling ) ;
 
