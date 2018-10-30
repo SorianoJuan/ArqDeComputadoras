@@ -84,7 +84,7 @@ module tb_uart_rx();
       .i_clock          (clock_tb_i)
    );
 
-   br_generator#(
+   baudrate_generator#(
                  .CLK_FREQ(614400 )// 4 ciclos por tick
                  )
    u_gr_generator(
