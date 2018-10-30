@@ -1,4 +1,4 @@
-module fifo
+module FIFO
   #(
     parameter NB_WORD = 8,
     parameter N_WORD_BUFFER = 4
