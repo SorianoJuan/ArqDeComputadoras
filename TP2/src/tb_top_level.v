@@ -8,25 +8,31 @@ module tb_top_level();
    localparam M_STOP         = 1 ;
    localparam LOG2_M_STOP    = 1 ;
 
+   localparam REG_A = 8'b0000_0011;
+   localparam REG_B = 8'b0000_1100;
+   localparam OP = 6'b100000; // SUMA
+   localparam START = 1'b0;
+   localparam STOP = 1'b1;
 
    // Outputs.
-   wire    [N_DATA+PARITY_CHECK-1:0]           		  o_data;
+   wire [NB_DATA-1:0]                               i_data;
+   wire                                             o_data;
    
    // Inputs.
-   reg [NB_DATA-1:0]                                i_data;
    reg                                          	  i_clk;
    reg                                          	  i_rst;
 
-   reg [((N_DATA+PARITY_CHECK+M_STOP+1)*2)-1:0]     data ;
+   reg [((N_DATA+PARITY_CHECK+M_STOP+1)*3):0]       data ;
+   reg [$clog2(15)-1:0]                             tmr;
+
+   assign i_data = data[0];
 
    initial begin
+      tmr <= 'b0;
       i_clk = 1'b0;
       i_rst = 1'b0;
-      i_data = 'b0 ;
-      data = 'b01100100000100111011101 ;
-      //frame recibido 1) 11101110 0
-      //frame recibido 2) 00001001 1 Con error de paridad
-      
+      data = {STOP,2'b00,OP,START,STOP,REG_B,START,STOP,REG_A,START,1'b1};
+
       #2 i_rst = 1'b1;
       #4 i_rst = 1'b0;
 
@@ -34,13 +40,17 @@ module tb_top_level();
 
    end
 
-   always #2 i_clk = ~i_clk;
+   always #1 i_clk = ~i_clk;
 
    always @ (posedge i_clk)
      begin
         if (u_tl.brgen_valid_urx)
-      	  data <= data>>1'b1 ;
-      	i_data <= data ;
+          if (tmr < 15)
+            tmr <= tmr+1;
+          else begin
+      	     data <= data>>1'b1 ;
+             tmr <= 'b0;
+          end
      end
 
    top_level
