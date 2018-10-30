@@ -1,7 +1,7 @@
 module uart_alu_interface
   #(
     parameter N_DATA = 8,
-    parameter PARITY_CHECK = 1,
+    parameter PARITY_CHECK = 0,
     parameter N_WORD_BUFFER = 4,
     parameter NB_OPERATION = 6
     )
@@ -10,6 +10,7 @@ module uart_alu_interface
     output reg [N_DATA-1:0]         o_alu_data_b,
     output reg [NB_OPERATION-1:0]   o_alu_data_op,
     output [N_DATA-1:0]             o_tx_data,
+    output                          o_tx_start,
 
     input [N_DATA-1:0]              i_alu_data,
     input [N_DATA+PARITY_CHECK-1:0] i_rx_data,
@@ -28,18 +29,21 @@ module uart_alu_interface
    wire                             rx_empty;
    wire                             tx_full;
    wire                             rx_read;
-   reg                              state[NB_STATES-1:0];
-   reg                              prev_state[NB_STATES-1:0];
+   wire                             tx_write;
+   wire                             tx_start;
+   reg                              tx_write_reg;
+   reg [NB_STATES-1:0]              state;
+   // reg                              prev_state[NB_STATES-1:0];
 
+   assign o_tx_start = ~tx_start;
    assign rx_read = ~rx_empty;
    assign o_tx_data = i_alu_data;
 
    always @ (posedge i_clk) begin
-      prev_state <= state;
       if (i_rst) begin
          o_alu_data_a <= {N_DATA{1'b0}};
          o_alu_data_b <= {N_DATA{1'b0}};
-         o_alu_data_op <= {N_OPERATION{1'b0}};
+         o_alu_data_op <= {NB_OPERATION{1'b0}};
          state <= {NB_STATES{1'b0}};
       end
       else begin
@@ -55,13 +59,13 @@ module uart_alu_interface
                  state <= state+1;
               end
               DATA_OP: begin
-                 o_alu_data_OP <= rx_data[NB_OPERATION-1:0]; // TODO: parity es el MSB o LSM?
+                 o_alu_data_op <= rx_data[NB_OPERATION-1:0]; // TODO: parity es el MSB o LSM?
                  state <= {NB_STATES{1'b0}};
               end
               default: begin
                  o_alu_data_a <= {N_DATA{1'b0}};
                  o_alu_data_b <= {N_DATA{1'b0}};
-                 o_alu_data_op <= {N_OPERATION{1'b0}};
+                 o_alu_data_op <= {NB_OPERATION{1'b0}};
                  state <= {NB_STATES{1'b0}};
               end
             endcase
@@ -69,20 +73,21 @@ module uart_alu_interface
       end
    end
 
-   //TODO: terminar
+   assign tx_write = ~((state == DATA_OP) & ~tx_full) & tx_write_reg;
+
    always@(posedge i_clk) begin
-      if(state == DATA_OP) begin
-         if(~tx_full)
-           tx_write <= 1'b1;
-         else
-      end
+      if(i_rst)
+        tx_write_reg <= 1'b0;
+      else
+        tx_write_reg <= ((state == DATA_OP) & ~tx_full);
    end
+
    FIFO#(
          .NB_WORD(N_DATA+PARITY_CHECK),
          .N_WORD_BUFFER(N_WORD_BUFFER)
          )
    u_FIFO_rx(
-             .o_data(o_alu_data),
+             .o_data(rx_data),
              .o_fifo_empty(rx_empty),
              .o_fifo_full(), //not connected
              .i_data(i_rx_data),
@@ -98,7 +103,7 @@ module uart_alu_interface
          )
    u_FIFO_tx(
              .o_data(o_tx_data),
-             .o_fifo_empty(), //not connected
+             .o_fifo_empty(tx_start), //not connected
              .o_fifo_full(tx_full),
              .i_data(i_alu_data),
              .i_read(i_tx_done),
