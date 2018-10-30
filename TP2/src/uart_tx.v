@@ -4,7 +4,7 @@ module uart_tx
     parameter                                   NB_DATA         = 8 , // Parallelism meaning how many bits of information are ready to be sent
     parameter                                   N_DATA          = 8 , // Nr of bits from frame
     parameter                                   LOG2_N_DATA     = 4 , // LOG2 (N_DATA+PARITY)
-    parameter                                   PARITY_CHECK    = 1 , // 1 If parity check is enabled, otherwise 0
+    parameter                                   PARITY_CHECK    = 0 , // 1 If parity check is enabled, otherwise 0
     parameter                                   EVEN_ODD_PARITY = 1 , // 1 If parity is even, 0 if it's odd 
     parameter                                   M_STOP          = 1 , // Nr of bits from stop 
     parameter                                   LOG2_M_STOP     = 1                            
