@@ -1,4 +1,4 @@
-module br_generator
+module baudrate_generator
   #(
     parameter CLK_FREQ = 100E6,
     parameter BAUD_RATE = 9600
