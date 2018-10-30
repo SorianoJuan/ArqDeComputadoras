@@ -7,14 +7,14 @@ module alu
     // Parameters.
     parameter                                       NB_DATA                     = 8 ,   // Nr of bits in the registers
     parameter                                       NB_OPERATION                = 6 ,    // Nr of bits in the operation input
-    localparam ADD =        4'b1000,
-    localparam SUB =        4'b1010,
-    localparam AND =        4'b1100,
-    localparam OR  =        4'b1101,
-    localparam XOR =        4'b1110,
-    localparam SRA =        4'b0011,
-    localparam SRL =        4'b0010,
-    localparam NOR =        4'b1111
+    localparam ADD =        6'b100000,
+    localparam SUB =        6'b100010,
+    localparam AND =        6'b100100,
+    localparam OR  =        6'b100101,
+    localparam XOR =        6'b100110,
+    localparam SRA =        6'b000011,
+    localparam SRL =        6'b000010,
+    localparam NOR =        6'b100111
     )
    (
     // Outputs.
