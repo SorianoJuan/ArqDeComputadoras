@@ -37,7 +37,7 @@ module uart_alu_interface
 
    assign o_tx_start = ~tx_start;
    assign rx_read = ~rx_empty;
-   assign o_tx_data = i_alu_data;
+   // assign o_tx_data = i_alu_data;
 
    always @ (posedge i_clk) begin
       if (i_rst) begin
