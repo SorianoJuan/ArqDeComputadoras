@@ -172,13 +172,13 @@ module uart_tx
     */
     always @( posedge i_clock )
     begin
-        if ( i_reset || i_valid && fsmo_reset_timer || time_out )
+        if ( i_reset || i_valid && fsmo_reset_timer || i_valid && time_out )
             timer <= {NB_TIMER{1'b0}} ;
         else if ( i_valid && !time_out )
             timer <= timer + 1'b1 ;
     end
 
-    assign time_out = ( timer >= MAX_TIMER ) ;
+    assign time_out = &timer;
 
     // N_DATA Counter
     /*
@@ -224,7 +224,7 @@ module uart_tx
     always @( posedge i_clock )
     begin
         if ( i_reset )
-            o_data <= 1'b0 ;
+            o_data <= 1'b1 ;
         else if ( i_valid && fsmo_start_bit && time_out )
             o_data <= 1'b0 ;
         else if ( i_valid && fsmo_transmit_data && time_out && !parity_bit) begin
