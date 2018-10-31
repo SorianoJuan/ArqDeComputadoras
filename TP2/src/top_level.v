@@ -6,14 +6,18 @@ module top_level
     )
    (
     //TODO: reemplazar por pines del contraint
-    output              o_data,
+    output RsTx,
     // output [1:0]        o_led,
     
-    input [NB_DATA-1:0] i_data,
-    input               i_clk,
-    input               i_rst
+    input  RsRx,
+    input  i_clk,
+    input  i_btnU
     );
 
+   wire    i_data;
+   wire    o_data;
+   wire    i_rst;
+   
    // Wires
    wire [NB_OPERATION-1:0] iface_dataop_alu;
    wire [N_DATA-1:0]       iface_dataa_alu;
@@ -30,6 +34,10 @@ module top_level
    wire                    utx_done_iface;
 
    wire [N_DATA-1:0]       alu_data_iface;
+
+   assign i_data = RsRx;
+   assign o_data = RsTx;
+   assign i_rst = i_btnU;
 
    assign brgen_valid_utx = brgen_valid_urx;
 

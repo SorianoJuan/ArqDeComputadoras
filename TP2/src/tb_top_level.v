@@ -55,10 +55,10 @@ module tb_top_level();
 
    top_level
      u_tl(
-          .o_data(o_data),
-          .i_data(i_data),
+          .RsTx(o_data),
+          .RsRx(i_data),
           .i_clk(i_clk),
-          .i_rst(i_rst)
+          .i_btnU(i_rst)
           );
 
 endmodule
