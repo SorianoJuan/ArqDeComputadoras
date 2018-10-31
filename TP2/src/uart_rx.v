@@ -190,13 +190,13 @@ module uart_rx
     assign sof = (data_negedge && fsmo_idle);
 
     // Shift register for the output
-    always @( posedge i_clock )
-    begin
+   always @( posedge i_clock )
+     begin
         if ( i_reset )
-            o_data <= 1'b0 ;
+          o_data <= {(N_DATA+PARITY_CHECK){1'b0}} ;
         else if ( i_valid && fsmo_capture_data && time_out)
-            o_data <= {o_data, i_data} ;
-    end
+          o_data <= {i_data, o_data[N_DATA+PARITY_CHECK-1:1]} ;
+     end
 
     // Signal that there is data ready
     always @( posedge i_clock )
