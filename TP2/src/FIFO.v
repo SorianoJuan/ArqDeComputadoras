@@ -12,7 +12,7 @@ module FIFO
     input                i_rst, i_clk
     );
 
-   localparam NB_PTR = $clog2(N_WORD_BUFFER);
+   localparam NB_PTR = clog2(N_WORD_BUFFER);
 
    integer               index;
 
@@ -52,4 +52,6 @@ module FIFO
          end
       end
    end
+
+`include "clog2.vh"
 endmodule

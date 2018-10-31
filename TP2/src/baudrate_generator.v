@@ -10,7 +10,7 @@ module baudrate_generator
     );
 
    localparam TICK_RATE = CLK_FREQ/(16*BAUD_RATE);
-   localparam COUNT_NBITS = $clog2(TICK_RATE);
+   localparam COUNT_NBITS = clog2(TICK_RATE);
 
    reg [COUNT_NBITS-1:0] counter;
 
@@ -22,4 +22,7 @@ module baudrate_generator
       else
         counter <= counter - 1;
    end
+
+`include "clog2.vh"
+
 endmodule

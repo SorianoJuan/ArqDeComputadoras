@@ -19,7 +19,7 @@ module uart_alu_interface
     );
 
    localparam N_STATES = 3;
-   localparam NB_STATES = $clog2(N_STATES);
+   localparam NB_STATES = clog2(N_STATES);
 
    localparam DATA_A = 0;
    localparam DATA_B = 1;
@@ -111,4 +111,7 @@ module uart_alu_interface
              .i_rst(i_rst),
              .i_clk(i_clk)
              );
+
+`include "clog2.vh"
+
 endmodule
