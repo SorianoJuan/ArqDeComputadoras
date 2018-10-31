@@ -212,19 +212,16 @@ module uart_tx
     assign max_m_stop_counter = ( m_stop_counter >= M_STOP) ;    
 
     // Data copy into internal register
-    always @( posedge i_clock )
-    begin
-        if ( i_reset )
-            data <= {NB_DATA{1'b0}} ;
-        else if ( i_valid && i_tx_start && (state==ST_0_IDLE))
-            data <= i_data ;
-    end
 
     // Frame composition + TX
-    always @( posedge i_clock )
-    begin
-        if ( i_reset )
-            o_data <= 1'b1 ;
+   always @( posedge i_clock )
+     begin
+        if ( i_reset ) begin
+           o_data <= 1'b1 ;
+           data <= {NB_DATA{1'b0}} ;
+        end
+        else if ( i_valid && i_tx_start && (state==ST_0_IDLE))
+          data <= i_data ;
         else if ( i_valid && fsmo_start_bit && time_out )
             o_data <= 1'b0 ;
         else if ( i_valid && fsmo_transmit_data && time_out && !parity_bit) begin
