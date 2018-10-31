@@ -23,11 +23,9 @@ module alu
     // Inputs.
     input wire [NB_DATA-1:0] i_data_a,
     input wire [NB_DATA-1:0] i_data_b,
-    input wire [NB_DATA-1:0] i_op
+    input wire [NB_OPERATION-1:0] i_op
     ) ;
    
-   wire [NB_DATA-1:0]        shifted;
-   wire [NB_DATA-1:0]        ashifted;
    integer                   i;
 
    always @(*)
