@@ -13,7 +13,7 @@ module top_level
     
     input  RsRx,
     input  i_clk,
-    input  i_btnU
+    input  i_btnC
     );
 
    wire    i_data;
@@ -38,8 +38,8 @@ module top_level
    wire [N_DATA-1:0]       alu_data_iface;
 
    assign i_data = RsRx;
-   assign o_data = RsTx;
-   assign i_rst = i_btnU;
+   assign RsTx = o_data;
+   assign i_rst = i_btnC;
 
    assign brgen_valid_utx = brgen_valid_urx;
 

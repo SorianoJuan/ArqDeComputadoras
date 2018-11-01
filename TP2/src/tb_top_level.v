@@ -60,7 +60,7 @@ module tb_top_level();
           .RsTx(o_data),
           .RsRx(i_data),
           .i_clk(i_clk),
-          .i_btnU(i_rst)
+          .i_btnC(i_rst)
           );
 
 endmodule
