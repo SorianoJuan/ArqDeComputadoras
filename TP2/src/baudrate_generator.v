@@ -1,3 +1,5 @@
+`timescale 1ns / 1ps
+
 module baudrate_generator
   #(
     parameter CLK_FREQ = 100E6,

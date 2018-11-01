@@ -1,3 +1,5 @@
+`timescale 1ns / 1ps
+
 module tb_top_level();
 
    localparam NB_DATA        = 1 ;
@@ -33,14 +35,14 @@ module tb_top_level();
       i_rst = 1'b0;
       data = {STOP,2'b00,OP,START,STOP,REG_B,START,STOP,REG_A,START,1'b1};
 
-      #2 i_rst = 1'b1;
-      #4 i_rst = 1'b0;
+      #100 i_rst = 1'b1;
+      #200 i_rst = 1'b0;
 
-      #5000 $finish;
+      #100000 $finish;
 
    end
 
-   always #1 i_clk = ~i_clk;
+   always #5 i_clk = ~i_clk;
 
    always @ (posedge i_clk)
      begin

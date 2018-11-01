@@ -1,3 +1,5 @@
+`timescale 1ns / 1ps
+
 module top_level
   #(
     parameter NB_DATA = 1,
@@ -78,7 +80,7 @@ module top_level
              .i_clk(i_clk)
              );
    
-   baudrate_generator
+   baudrate_generator#(.BAUD_RATE(960000)) //TODO: SACAR ESTO, SOLO POR SIMULACION
      u_br_gen(
               .o_tick(brgen_valid_urx),
               .i_clk(i_clk),

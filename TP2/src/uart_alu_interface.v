@@ -1,3 +1,5 @@
+`timescale 1ns / 1ps
+
 module uart_alu_interface
   #(
     parameter N_DATA = 8,

@@ -1,3 +1,5 @@
+`timescale 1ns / 1ps
+
 module FIFO
   #(
     parameter NB_WORD = 8,
