@@ -35,7 +35,7 @@ module uart_tx
 
     // Other
     localparam                                  MAX_TIMER       = 16 ;
-    localparam                                  NB_TIMER        = 5 ;
+    localparam                                  NB_TIMER        = 4 ;
 
     localparam                                  NB_N_DATA_COUNTER = LOG2_N_DATA ;
     localparam                                  NB_M_STOP_COUNTER = LOG2_M_STOP ;                            
