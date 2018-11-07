@@ -82,7 +82,7 @@ module bip_control
     		STORE_VARIABLE :
     		begin
     			wr_pc = 1'b1 ;
-                o_sel_a = 2'b00 ; //Ver
+                o_sel_a = 2'b11 ; //Ver
                 o_sel_b = 1'b0 ;
                 o_wr_acc = 1'b0 ;
                 o_op_code = 1'b0 ;

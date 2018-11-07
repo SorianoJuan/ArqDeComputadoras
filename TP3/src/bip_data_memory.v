@@ -30,6 +30,18 @@ module bip_data_memory
     //==========================================================================
     // ALGORITHM.
     //==========================================================================
+    initial begin
+    mem_bank[0] = 16'h0000 ;
+    mem_bank[1] = 16'h0001 ;
+    mem_bank[2] = 16'h0002 ;
+    mem_bank[3] = 16'h0003 ;
+    mem_bank[4] = 16'h0004 ;
+    mem_bank[5] = 16'h0005 ;
+    mem_bank[6] = 16'h0006 ;
+    mem_bank[7] = 16'h0007 ;
+    mem_bank[8] = 16'h0008 ;
+    mem_bank[9] = 16'h0009 ;
+    end
 
     assign o_data = data ;
 
