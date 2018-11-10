@@ -90,7 +90,7 @@ module bip_cpu
     bip_datapath
     #(                      
         .NB_DATA                (NB_DATA           ),           
-        .NB_OPCOD               (NB_OPCODE         ),           
+        .NB_OPCODE              (NB_OPCODE         ),           
         .NB_OPERAND             (NB_OPERAND        ),           
         .N_INSMEM_ADDR          (N_INSMEM_ADDR     ),               
         .LOG2_N_INSMEM_ADDR     (LOG2_N_INSMEM_ADDR),                   
