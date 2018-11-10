@@ -9,8 +9,8 @@ module bip_datapath
     parameter 									N_DATA_ADDR = 1024, 
     parameter 									LOG2_N_DATA_ADDR = 10,
     parameter                                   NB_SEL_A = 2, 
-    parameter                                   NB_DATA_S_EXT = 11,
-    parameter                                   NB_EXTENSION_SIZE = 5
+    parameter                                   NB_DATA_S_EXT = 10,
+    parameter                                   NB_EXTENSION_SIZE = 6
 )
 (
     // Outputs.
@@ -18,7 +18,7 @@ module bip_datapath
     // Inputs.
     input  wire 	[NB_DATA_S_EXT-1:0]		    i_data_instruction, // Signal from control unit
     input  wire     [NB_DATA-1:0]               i_data_mem, // Memory coming from data bank
-    input  wire     [NB_DATA_S_EXT-1:0]         i_sel_a,
+    input  wire     [NB_SEL_A-1:0]              i_sel_a,
     input  wire                                 i_sel_b,
     input  wire                                 i_wr_acc,
     input  wire                                 i_op_code,
@@ -38,6 +38,7 @@ module bip_datapath
     reg 			[NB_DATA-1:0]			    acc ; // Accumulator register
 
     wire            [NB_DATA-1:0]               mux_selb ;
+    //reg             [NB_DATA-1:0]               mux_selb_d ;
     wire            [NB_DATA-1:0]               extended_signal ;
     wire            [NB_DATA-1:0]               alu_out ;
 
@@ -48,7 +49,15 @@ module bip_datapath
 
     assign mux_selb = (i_sel_b)? extended_signal : i_data_mem ; // Mux that selects either extended signal or input from data bank
 
-    assign extended_signal = {{NB_EXTENSION_SIZE{i_data_instruction[NB_OPERAND-1]}}, i_data_instruction} ; // Replicate sign to get to NB_DATA bits
+    /*always @ ( posedge i_clock )
+    begin
+        if (i_reset)
+            mux_selb_d <= 1'b0 ;
+        else if ( i_valid )
+            mux_selb_d <= mux_selb;
+    end*/
+
+    assign extended_signal = {{NB_EXTENSION_SIZE{i_data_instruction[NB_DATA_S_EXT-1]}}, i_data_instruction} ; // Replicate sign to get to NB_DATA bits
 
     assign alu_out = (i_op_code)? acc + mux_selb : acc - mux_selb ;
 

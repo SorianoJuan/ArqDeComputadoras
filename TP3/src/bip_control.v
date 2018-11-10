@@ -18,8 +18,8 @@ module bip_control
     output reg 									o_op_code,
     output reg 									o_wr_ram,
     output reg 									o_rd_ram,
-    output wire 	[LOG2_N_DATA_ADDR-1:0]		o_addr_instr,
-    output wire 	[LOG2_N_INSMEM_ADDR-1:0]	o_data_instr,
+    output wire 	[LOG2_N_INSMEM_ADDR-1:0]    o_addr_instr,
+    output wire 	[LOG2_N_DATA_ADDR-1:0]	    o_data_instr,
     // Inputs.
     input  wire 	[NB_DATA-1:0]				i_instruction,
     input  wire 								i_clock,
@@ -53,7 +53,7 @@ module bip_control
     //==========================================================================
     assign o_addr_instr = pc ;
 
-    assign o_data_instr = i_instruction[NB_OPERAND-1:0] ;
+    assign o_data_instr = i_instruction[NB_OPERAND-1:0] ; //LOG2_N_DATA_ADDR
 
     // PC refresh
     always @ (posedge i_clock)
@@ -68,11 +68,11 @@ module bip_control
     end
 
     always @(*) begin
-    	case(i_instruction[NB_DATA-1-:NB_OPERAND])
+    	case(i_instruction[NB_DATA-1-:NB_OPCODE])
     		HALT :
     		begin
     			wr_pc = 1'b0 ;
-                o_sel_a = 2'b0 ;
+                o_sel_a = 2'b11 ;
                 o_sel_b = 1'b0 ;
                 o_wr_acc = 1'b0 ;
                 o_op_code = 1'b0 ;
@@ -152,7 +152,7 @@ module bip_control
     		default :
     		begin
     			wr_pc = 1'b0 ;
-                o_sel_a = 2'b0 ;
+                o_sel_a = 2'b11 ;
                 o_sel_b = 1'b0 ;
                 o_wr_acc = 1'b0 ;
                 o_op_code = 1'b0 ;

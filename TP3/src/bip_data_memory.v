@@ -45,7 +45,7 @@ module bip_data_memory
 
     assign o_data = data ;
 
-    always @ (posedge i_clock)
+    always @ (negedge i_clock)
     begin
         if (i_reset)
             data <= {NB_DATA{1'b0}};

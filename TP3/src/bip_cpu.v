@@ -9,13 +9,13 @@ module bip_cpu
     parameter                                   N_DATA_ADDR = 1024, 
     parameter                                   LOG2_N_DATA_ADDR = 10,
     parameter                                   NB_SEL_A = 2, 
-    parameter                                   NB_DATA_S_EXT = 11,
-    parameter                                   NB_EXTENSION_SIZE = 5
+    parameter                                   NB_DATA_S_EXT = 10,
+    parameter                                   NB_EXTENSION_SIZE = 6
 )
 (
     // Outputs.
-    output wire     [LOG2_N_DATA_ADDR-1:0]      o_addr_instr,
-    output wire     [LOG2_N_INSMEM_ADDR-1:0]    o_data_instr,
+    output wire     [LOG2_N_INSMEM_ADDR-1:0]    o_addr_instr,
+    output wire     [NB_DATA_S_EXT-1:0]         o_data_instr,
     output wire     [NB_DATA-1:0]               o_data,
     output wire                                 o_wr_ram,
     output wire                                 o_rd_ram,
@@ -37,7 +37,7 @@ module bip_cpu
     // INTERNAL SIGNALS.
     //==========================================================================
     wire [LOG2_N_INSMEM_ADDR-1:0]         addr_instr;
-    wire [LOG2_N_DATA_ADDR-1:0]           data_instr;
+    wire [NB_DATA_S_EXT-1:0]              data_instr;
     wire                                  rd;
     wire                                  wr;
     wire [NB_DATA-1:0]                    data ;

@@ -9,8 +9,8 @@ module bip_BIP
     parameter                                   N_DATA_ADDR = 1024, 
     parameter                                   LOG2_N_DATA_ADDR = 10,
     parameter                                   NB_SEL_A = 2, 
-    parameter                                   NB_DATA_S_EXT = 11,
-    parameter                                   NB_EXTENSION_SIZE = 5
+    parameter                                   NB_DATA_S_EXT = 10,
+    parameter                                   NB_EXTENSION_SIZE = 6
 )
 (
     // Outputs.
@@ -37,8 +37,8 @@ module bip_BIP
     wire                                  wr;
 
     wire [NB_DATA-1:0]                    data_pc_to_mem;
-    wire [LOG2_N_INSMEM_ADDR-1:0]         instr;
-    wire [LOG2_N_DATA_ADDR-1:0]           data_mem;
+    wire [NB_DATA-1:0]                    instr;
+    wire [NB_DATA-1:0]                    data_mem;
 
 
     //==========================================================================
