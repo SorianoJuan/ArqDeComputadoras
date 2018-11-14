@@ -2,18 +2,20 @@
 
 module top_level
   #(
+    parameter B_RATE = 9600,
     parameter NB_DATA = 1,
     parameter N_DATA = 8,
     parameter NB_OPERATION = 6
     )
    (
     //TODO: reemplazar por pines del contraint
-    output RsTx,
+    output      RsTx,
+    output [1:0] JA,
     // output [1:0]        o_led,
     
-    input  RsRx,
-    input  i_clk,
-    input  i_btnC
+    input       RsRx,
+    input       i_clk,
+    input       i_btnC
     );
 
    wire    i_data;
@@ -37,8 +39,10 @@ module top_level
 
    wire [N_DATA-1:0]       alu_data_iface;
 
+   assign JA[1] = RsRx;
    assign i_data = RsRx;
    assign RsTx = o_data;
+   assign JA[0] = o_data;
    assign i_rst = i_btnC;
 
    assign brgen_valid_utx = brgen_valid_urx;
@@ -80,7 +84,7 @@ module top_level
              .i_clk(i_clk)
              );
    
-   baudrate_generator#(.BAUD_RATE(960000)) //TODO: SACAR ESTO, SOLO POR SIMULACION
+   baudrate_generator#(.BAUD_RATE(B_RATE))
      u_br_gen(
               .o_tick(brgen_valid_urx),
               .i_clk(i_clk),

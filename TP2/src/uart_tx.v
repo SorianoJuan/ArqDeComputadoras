@@ -242,8 +242,8 @@ module uart_tx
     begin
         if ( i_reset )
             o_tx_done <= 1'b0 ;
-        else if ( i_valid && fsmo_tx_done )
-            o_tx_done <= 1'b1 ;
+        else if ( i_valid )
+            o_tx_done <= fsmo_tx_done;
     end
 
 endmodule

@@ -31,8 +31,8 @@ module uart_alu_interface
    wire                             rx_empty;
    wire                             tx_full;
    wire                             rx_read;
-   wire                             tx_write;
    wire                             tx_start;
+   wire                             tx_write;
    reg                              tx_write_reg;
    reg [NB_STATES-1:0]              state;
    // reg                              prev_state[NB_STATES-1:0];
@@ -75,6 +75,13 @@ module uart_alu_interface
       end
    end
 
+   // always@(posedge i_clk) begin
+   //    tx_write <= ((state == DATA_OP) & ~tx_full) & ~tx_write_reg;
+   //    if(i_rst)
+   //      tx_write_reg <= 1'b0;
+   //    else
+   //      tx_write_reg <= ((state == DATA_OP) & ~tx_full);
+   // end
    assign tx_write = ~((state == DATA_OP) & ~tx_full) & tx_write_reg;
 
    always@(posedge i_clk) begin
