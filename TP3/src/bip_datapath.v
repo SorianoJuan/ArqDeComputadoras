@@ -66,7 +66,7 @@ module bip_datapath
     begin
         if (i_reset)
             acc <= {NB_DATA{1'b0}};
-        else if (i_wr_acc == 1'b1) begin
+        else if (i_wr_acc & i_valid) begin
             case (i_sel_a)
             2'b00: acc <= i_data_mem;
             2'b01: acc <= extended_signal;

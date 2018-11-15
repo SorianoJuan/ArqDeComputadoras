@@ -39,15 +39,25 @@ module bip_BIP
     wire [NB_DATA-1:0]                    data_pc_to_mem;
     wire [NB_DATA-1:0]                    instr;
     wire [NB_DATA-1:0]                    data_mem;
+   reg [LOG2_N_INSMEM_ADDR-1:0]           n_clock;
 
 
     //==========================================================================
     // ALGORITHM.
     //==========================================================================
 
-    assign o_pc = addr_instr;
-    assign o_instruction = instr ;
-    assign o_acc = data_pc_to_mem;
+
+   assign o_pc = n_clock;
+   assign o_instruction = instr ;
+   assign o_acc = data_pc_to_mem;
+   
+   always@(posedge i_clock) begin
+      if(i_reset)
+        n_clock <= {LOG2_N_INSMEM_ADDR{1'b0}};
+      else
+        if(i_valid)
+          n_clock <= n_clock +1'b1;
+   end
 
     bip_cpu
     #(              
