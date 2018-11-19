@@ -69,8 +69,8 @@ module top_level
                           .o_tx_start(iface_start_tx),
                           .o_valid(iface_valid_bip),
                           .i_tx_done(tx_done_iface),
-                          .i_clk(i_clk),
-                          .i_rst(i_rst),
+                          .i_clock(i_clk),
+                          .i_reset(i_rst),
                           .i_acc(bip_acc_iface),
                           .i_instruction(bip_instruction_iface),
                           .i_nclock(bip_nclock_iface)

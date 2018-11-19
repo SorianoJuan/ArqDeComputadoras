@@ -3,7 +3,7 @@
 module baudrate_generator
   #(
     parameter CLK_FREQ = 100E6,
-    parameter BAUD_RATE = 9600
+    parameter BAUD_RATE = 9600000
     )
    (
     output o_tick,
