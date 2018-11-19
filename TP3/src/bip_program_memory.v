@@ -48,7 +48,7 @@ module bip_program_memory
     always @ (posedge i_clock)
     begin
         if (i_reset)
-            data <= {NB_DATA{1'b0}};
+            data <= mem_bank[0];
         else if (i_enable)
             data <= mem_bank[i_addr];
     end

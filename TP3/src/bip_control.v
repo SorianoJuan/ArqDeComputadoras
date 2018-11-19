@@ -46,7 +46,7 @@ module bip_control
     // INTERNAL SIGNALS.
     //==========================================================================
     reg 			[LOG2_N_INSMEM_ADDR-1:0]			pc ; //Program Counter Register
-    reg 										wr_pc ; //Add 1 to PC
+    reg 										        wr_pc ; //Add 1 to PC
 
     //==========================================================================
     // ALGORITHM.
@@ -60,7 +60,7 @@ module bip_control
     begin
     	if (i_reset) 
     	begin
-    		pc <= {N_INSMEM_ADDR{1'b0}};
+    		pc <= 1'b1 ; //{N_INSMEM_ADDR{1'b0}};
     	end
     	else if (i_valid && wr_pc)
     		pc <= pc + 1'b1 ;

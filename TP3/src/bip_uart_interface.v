@@ -28,9 +28,9 @@ module bip_uart_interface
     reg             [NB_DATA-1:0]               	ncl_bank [N_ADDR-1:0] ;
     reg             [NB_DATA-1:0]                 	data ;   
 
-    reg 			[LOG2_N_INSMEM_ADDR-1:0]		timer_wr ;
-    reg 			[LOG2_N_INSMEM_ADDR+2-1:0]		timer_rd ;
-    reg 			[LOG2_N_INSMEM_ADDR-1:0] 		addr_rd ;
+    reg 			[NB_TIMER-1:0]		timer_wr ;
+    reg 			[NB_TIMER+2-1:0]		timer_rd ;
+    reg 			[NB_TIMER-1:0] 		addr_rd ;
     reg                                             timeout_wr ;
     reg 											timeout_rd ;
     reg 											tx_done_d ;
@@ -53,7 +53,7 @@ module bip_uart_interface
     //Timer write
     always @(posedge i_clock)begin
     	if (i_reset) begin
-    		timer_wr <= {LOG2_N_INSMEM_ADDR{1'b0}};
+    		timer_wr <= {NB_TIMER{1'b0}};
     		timeout_wr <= 1'b0;
     	end
     	else if(!timeout_wr) begin
@@ -65,7 +65,7 @@ module bip_uart_interface
     //Timer read
     always @(posedge i_clock)begin
     	if (i_reset) begin
-    		timer_rd <= {LOG2_N_INSMEM_ADDR{1'b0}};
+    		timer_rd <= {NB_TIMER{1'b0}};
     		timeout_rd <= 1'b0;
     	end
     	else if (timeout_wr && !timeout_rd && tx_done_pos) begin
@@ -77,7 +77,7 @@ module bip_uart_interface
     //Address read pointer
     always @(posedge i_clock)begin
     	if (i_reset) begin
-    		addr_rd <= {LOG2_N_INSMEM_ADDR{1'b0}};
+    		addr_rd <= {NB_TIMER{1'b0}};
     	end
     	else if (tx_done_pos && ((timer_rd + 1) % 3 == 0)) begin
     		addr_rd <= addr_rd + 1'b1 ;
