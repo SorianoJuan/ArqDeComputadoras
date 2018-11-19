@@ -3,8 +3,9 @@ module bip_uart_interface
 		parameter                                   NB_DATA = 16,
 		parameter                                   NB_DATATX = 16,
 		parameter                                   N_ADDR = 16, 
-		parameter                                   LOG2_N_INSMEM_ADDR = 4,
-		parameter                                   N_WORD_BUFFER = 30
+		parameter                                   LOG2_N_INSMEM_ADDR = 11,
+		parameter                                   N_WORD_BUFFER = 30,
+        parameter                                   NB_TIMER = 4
 		)
 	 (
 		output [NB_DATA-1:0]                        o_data,
