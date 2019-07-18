@@ -21,7 +21,6 @@ module FIFO
    //using +1 here in order to differentiate empty state from full state
    reg [NB_PTR+1-1:0]    rd_ptr_reg, wr_ptr_reg;
    reg [NB_WORD-1:0]     buffer[0:N_WORD_BUFFER-1];
-   reg                   i_write_reg;
    reg                   i_read_reg;
 
    wire [NB_PTR-1:0]     rd_ptr, wr_ptr;
@@ -52,12 +51,11 @@ module FIFO
    end
 
    always@(negedge i_clk)begin
-      i_write_reg <= i_write;
       if(i_rst)begin
          wr_ptr_reg <= {NB_PTR+1{1'b0}};
       end
       else begin
-         if(i_write & ~i_write_reg) begin
+         if(i_write) begin
             buffer[wr_ptr] <= i_data;
             wr_ptr_reg <= wr_ptr+1;
          end

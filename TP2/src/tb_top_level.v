@@ -2,6 +2,7 @@
 
 module tb_top_level();
 
+   localparam B_RATE         = 960000;
    localparam NB_DATA        = 1 ;
    localparam N_DATA         = 8 ;
    localparam LOG2_N_DATA    = 4 ;
@@ -13,6 +14,9 @@ module tb_top_level();
    localparam REG_A = 8'b0000_0011;
    localparam REG_B = 8'b0000_1100;
    localparam OP = 6'b100000; // SUMA
+   localparam REG_A1 = 8'b0000_1000;
+   localparam REG_B1 = 8'b0000_0010;
+   localparam OP1 = 6'b000010; // SUMA
    localparam START = 1'b0;
    localparam STOP = 1'b1;
 
@@ -24,7 +28,7 @@ module tb_top_level();
    reg                                          	  i_clk;
    reg                                          	  i_rst;
 
-   reg [((N_DATA+PARITY_CHECK+M_STOP+1)*3):0]       data ;
+   reg [((N_DATA+PARITY_CHECK+M_STOP+1)*6):0]       data ;
    reg [$clog2(15)-1:0]                             tmr;
 
    assign i_data = data[0];
@@ -33,7 +37,10 @@ module tb_top_level();
       tmr <= 'b0;
       i_clk = 1'b0;
       i_rst = 1'b0;
-      data = {STOP,2'b00,OP,START,STOP,REG_B,START,STOP,REG_A,START,1'b1};
+      data = {
+              STOP,2'b00,OP1,START,STOP,REG_B1,START,STOP,REG_A1,START,
+              STOP,2'b00,OP,START,STOP,REG_B,START,STOP,REG_A,START,1'b1
+              };
 
       #100 i_rst = 1'b1;
       #200 i_rst = 1'b0;
@@ -55,7 +62,7 @@ module tb_top_level();
           end
      end
 
-   top_level
+   top_level#(.B_RATE(B_RATE))
      u_tl(
           .RsTx(o_data),
           .RsRx(i_data),
